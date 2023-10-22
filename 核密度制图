@@ -1,0 +1,60 @@
+clear;
+%导入数据
+[panel] = xlsread('C:\Users\邓和顺\Desktop\画图\分省\效率【画核密度图用】.xlsx',1,'A1:Q11'); 
+[row,col] = size(panel); 
+% 定义待估区间
+globel_max = max(max(panel)) + 0.5;
+globel_min = min(min(panel)) - 0.5;
+x_1 = globel_min : 0.01 : globel_max;
+% 定义时间变量
+y = [];
+c = 1; 
+year = 2003; 
+for j = 1:col
+for i = 1:length(x_1)
+y(c) = year;
+c = c + 1;
+end
+year = year + 1;
+end 
+year_origin = min(y);
+year_final = max(y);
+% 定义一个核密度向量，用于存放最终的核密度值
+ff = [];
+% 定义x轴变量，表示 估计点x0 的集合
+X_1 = [];
+% 逐年计算核密度值
+% 定义带宽
+h = 0.06; 
+l = 1; 
+for k = 1:col 
+x = panel(:,k); 
+% 定义核估计函数
+f = zeros(1, length(x_1)); 
+f_1 = zeros(1, length(x_1)); 
+for j = 1:length(x_1) 
+for i=1:length(x) 
+f(j)=f(j)+exp(-(x_1(j)-x(i))^2/2/h^2)/sqrt(2*pi); % 这里使用高斯核
+end
+ff(l)=f(j)/length(x)/h; 
+X_1(l) = x_1(j); 
+l = l + 1; 
+end
+end
+% 以下是绘图设置
+[X, Y] = meshgrid(0:0.005:max(max(panel))+100, year_origin:4:year_final); 
+Z = griddata(X_1, y, ff, X, Y, 'cubic'); 
+%subplot(1,2,2)
+surf(X,Y,Z)
+%shading flat
+xlim([0 1])
+ylim([year_origin year_final])
+zlim([0 max(ff)])
+% 字体设置
+set(gca,'linewidth',1,'fontsize',15,'fontname','Times,宋体')
+set(0,'defaultfigurecolor','w') 
+title('长江经济带');
+ylabel('年份');xlabel('制造业碳排放效率');zlabel('核密度')
+set(get(gca,'XLabel'),'Fontsize',15)
+set(get(gca,'YLabel'),'Fontsize',15)
+set(gca,'XTick',0:0.1:1) ; 
