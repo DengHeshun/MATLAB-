@@ -1,6 +1,7 @@
 clear;
 %导入数据
 [panel] = xlsread('C:\Users\邓和顺\Desktop\画图\分省\效率【画核密度图用】.xlsx',1,'A1:Q11'); 
+%宽面板数据：每一列代表每一年，每一行代表每一个地区，'A1:Q11'仅包含具体的数据，不包含行名、列名，数据具体样式见：C:\Users\邓和顺\Desktop\9.Database_\9.Nuclear_density\示例数据.xsxl
 [row,col] = size(panel); 
 % 定义待估区间
 globel_max = max(max(panel)) + 0.5;
